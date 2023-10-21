@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .content {
+      height: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="button">Toggle Collapse</button>
+  <div class="content">
+    Content that can be collapsed or expanded.
+  </div>
+
+  <script>
+    function collapseWithFade(element, duration = 300, isCollapsing) {
+      const startOpacity = isCollapsing ? 1 : 0;
+      const endOpacity = isCollapsing ? 0 : 1;
+      const startHeight = element.clientHeight;
+      const endHeight = isCollapsing ? 0 : element.scrollHeight;
+      let startTime;
+      element.style.overflow = "hidden";
+
+      const animate = (timestamp) => {
+        if (!startTime) startTime = timestamp;
+
+        const progress = (timestamp - startTime) / duration;
+
+        if (progress < 1) {
+          const newHeight = startHeight + (endHeight - startHeight) * progress;
+          const newOpacity = startOpacity + (endOpacity - startOpacity) * progress;
+          element.style.height = newHeight + 'px';
+          element.style.opacity = newOpacity;
+          requestAnimationFrame(animate);
+        } else {
+          element.style.height = isCollapsing ? '0' : 'auto';
+          element.style.opacity = endOpacity;
+          element.style.overflow = isCollapsing ? "hidden" : "visible";
+        }
+      };
+
+      element.style.height = startHeight + 'px';
+      element.style.opacity = startOpacity;
+      requestAnimationFrame(animate);
+    }
+
+    const button = document.querySelector(".button");
+    const content = document.querySelector(".content");
+    let isCollapsed = true;
+
+    button.addEventListener("click", () => {
+      isCollapsed = !isCollapsed;
+      collapseWithFade(content, 300, isCollapsed);
+    });
+  </script>
+
+</body>
+</html>
